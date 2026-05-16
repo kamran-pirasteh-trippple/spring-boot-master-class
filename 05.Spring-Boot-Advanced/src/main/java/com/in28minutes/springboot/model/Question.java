@@ -2,9 +2,12 @@ package com.in28minutes.springboot.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Question {
 	private String id;
 	private String description;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String correctAnswer;
 	private List<String> options;
 

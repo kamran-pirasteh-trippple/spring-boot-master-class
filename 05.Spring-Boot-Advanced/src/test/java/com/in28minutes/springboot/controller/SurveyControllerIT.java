@@ -55,7 +55,7 @@ public class SurveyControllerIT {
 				createURLWithPort("/surveys/Survey1/questions/Question1"),
 				HttpMethod.GET, entity, String.class);
 
-		String expected = "{id:Question1,description:\"Largest Country in the World\",correctAnswer:Russia}";
+		String expected = "{id:Question1,description:\"Largest Country in the World\"}";
 
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
