@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -74,10 +75,11 @@ public class SurveyControllerTest {
 						.any(Question.class))).thenReturn(mockQuestion);
 
 		//Send question as body to /surveys/Survey1/questions
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(
-				"/surveys/Survey1/questions")
-				.accept(MediaType.APPLICATION_JSON).content(questionJson)
-				.contentType(MediaType.APPLICATION_JSON);
+				RequestBuilder requestBuilder = MockMvcRequestBuilders.post(
+						"/surveys/Survey1/questions")
+						.accept(MediaType.APPLICATION_JSON).content(questionJson)
+						.contentType(MediaType.APPLICATION_JSON)
+						.with(csrf());
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
