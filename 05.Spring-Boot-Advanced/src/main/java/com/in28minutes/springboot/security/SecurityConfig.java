@@ -34,8 +34,8 @@ public class SecurityConfig {
 						.requestMatchers("/surveys/**").hasRole("USER")
 						.requestMatchers("/users/**").hasRole("USER")
 						.requestMatchers("/**").hasRole("ADMIN"))
-				.csrf(csrf -> csrf.disable())
-				.headers(headers -> headers.frameOptions(frame -> frame.disable()));
+				.csrf(csrf -> csrf.ignoringRequestMatchers("/surveys/**"))
+				.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 		return http.build();
 	}
 
