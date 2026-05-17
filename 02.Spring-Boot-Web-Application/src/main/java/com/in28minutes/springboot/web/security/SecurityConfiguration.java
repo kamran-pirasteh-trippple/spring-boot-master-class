@@ -5,11 +5,13 @@ import org.springframework.context.annotation.Bean;
 // import org.springframework.context.annotation.Configuration;
 // import org.springframework.http.HttpMethod;
 // import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-// import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -27,11 +29,15 @@ public class SecurityConfiguration {
 //                .roles("USER", "ADMIN");
 //    }
 
-    // We used the method User.withDefaultPasswordEncoder() for readability and course purpose.
-    // It is not intended for PRODUCTION environment, and instead we recommend hashing your passwords externally
+    @SuppressWarnings("deprecation")
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
+
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
+        UserDetails user = User.builder()
                 .username("in28Minutes")
                 .password("dummy")
                 .roles("ADMIN", "USER")
@@ -40,23 +46,18 @@ public class SecurityConfiguration {
         return new InMemoryUserDetailsManager(user);
     }
 
-    // In Spring Security 5.4 introduced the ability to configure HttpSecurity by creating a SecurityFilterChain bean.
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests((authorize) -> {
-                    try {
-                        authorize
-                                .antMatchers("/login", "/h2-console/**").permitAll()
-                                .antMatchers("/", "/*todo*/**").hasRole("USER")
-                                .and().formLogin()
-                                .and().csrf().disable()
-                                .headers().frameOptions().disable();
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-
+        http
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login", "/h2-console/**").permitAll()
+                        .requestMatchers("/", "/*todo*/**").hasRole("USER")
+                )
+                .formLogin(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.disable())
+                );
 
         return http.build();
     }

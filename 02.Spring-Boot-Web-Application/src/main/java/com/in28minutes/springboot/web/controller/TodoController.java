@@ -3,7 +3,7 @@ package com.in28minutes.springboot.web.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
